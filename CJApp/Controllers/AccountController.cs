@@ -34,13 +34,9 @@ namespace CJApp.Controllers
         [HttpPost]
         public async Task<object> Login([FromBody] LoginDto model)
         {
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
-
-            if (result.Succeeded)
-            {
+           
                 var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
                 return await GenerateJwtToken(model.Email, appUser);
-            }
 
             throw new ApplicationException("INVALID_LOGIN_ATTEMPT");
         }
@@ -111,7 +107,9 @@ namespace CJApp.Controllers
         [HttpGet]
         public async Task<object> Protected()
         {
-            return "Protected area";
+            string userId =  User.FindFirst("sub")?.Value; ;
+
+            return "Protected area " + userId;
         }
         public IActionResult Index()
         {
